@@ -1,0 +1,52 @@
+include:
+  - project: 'utils/autodevops'
+    file: 'components/build.yaml'
+  - project: 'utils/autodevops'
+    file: 'components/deploy-k8s.yaml'
+  - project: 'utils/autodevops'
+    file: 'components/deploy-test.yaml'
+variables: &global-variables
+  MULTI_DEPLOYMENT: "true"
+  DEPLOYMENTS_LIST: "${CI_PROJECT_NAME}-scheduler, ${CI_PROJECT_NAME}-operator, ${CI_PROJECT_NAME}-persister, ${CI_PROJECT_NAME}-api,${CI_PROJECT_NAME}-backend"
+
+Deploy:Dev3:
+  extends: .deploySource
+  environment: Dev3
+  tags:
+    - dev3
+
+Deploy:Dev1:
+  extends: .deploySource
+  environment: Dev1
+  tags:
+    - whiskey
+    - shell
+
+
+Build:
+  extends: .build
+  only:
+    - api
+    - web
+  
+Build Web:
+  extends: .build
+  only:
+    - api
+    - web
+  before_script:
+    - export CI_REGISTRY_IMAGE_SUFFIX=web
+  variables:
+    DOCKERFILE: "Dockerfile.web"
+
+Deploy:Staging:
+  variables:
+    <<: *global-variables
+
+Deploy:Production:
+  variables:
+    <<: *global-variables
+    API_REPLICAS_COUNT: 3
+    OPERATOR_REPLICAS_COUNT: 2
+    PERSISTER_REPLICAS_COUNT: 2
+

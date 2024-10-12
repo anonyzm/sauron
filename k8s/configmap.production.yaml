@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-config
+data:
+  MONGODB_DSN: "mongodb://sauron:1KtxV0vOco6Nz12t@rc1c-6fanujc616qxjdil.mdb.yandexcloud.net:27018/sauron?replicaSet=rs01&ssl=false"
+  PRESENTATION_MONGODB_DSN: "mongodb://sauron:1KtxV0vOco6Nz12t@rc1c-6fanujc616qxjdil.mdb.yandexcloud.net:27018/sauron-presentation?replicaSet=rs01&ssl=false"
+  MONGO_CA_FILE: "/home/application/.mongodb/YandexCA.pem"
+  RABBIT_HOST: rabbitmq.production.svc.cluster.local
+  RABBIT_VHOST: sauron
+  SENTRY_ENABLED: "true"
+  SENTRY_ENVIRONMENT: production-yc-aurora
+  LUMINATI_USERNAME: lum-customer-kuznitsa-zone-datacenter_monitoring_test
+  LUMINATI_PASSWORD: 3j06rzzegauc
+  INSTAPARSER_URL: http://stage2-stateeks-instaparser.ttt1.pro/instagram/
+  INSTAPARSER_PREFER: luminati
+  INSTAPARSER_SERVICE: analytics
+  RABBIT_API_URL: rabbitmq.production.svc.cluster.local:15672
+  RABBIT_API_USER: sauron-monitoring
+  RABBIT_API_PASSWORD: aIzozelb2DcmMdmz
+  REDIS_HOST: localhost
+  PROXY_AUTH_TOKEN: CHBr2S29pB8q2XF4
+  INSTAGRAM_PROXY_API_URL: http://sauron-api-svc.production.svc.cluster.local/instagram-proxy
+  TWITTER_PROXY_API_URL: http://sauron-api-svc.production.svc.cluster.local/twitter-proxy
+  FINEPROXY_LOGIN: US280869
+  FINEPROXY_PASSWORD: MmQPp0nybl
+  REDDIT_API_URL: http://sauron-api-svc.production.svc.cluster.local/reddit-auth
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-scheduler-config
+data:
+  APPLICATION: scheduler
+  RABBIT_USER: sauron-scheduler
+  RABBIT_PASSWORD: "7N7UGo4gpi1KuvMD"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-persister-config
+data:
+  APPLICATION: persister
+  RABBIT_USER: sauron-persister
+  RABBIT_PASSWORD: "vaPIMvHSfogJ7nsR"
+  DEFAULT_SERVICE_KEY: "aw98R63dFWs-JKXF5OQ11hGsDfqwwaeg"
+  PERSISTER_CONSUMERS: "20"
+  PRESENTATION_CONSUMERS: "20"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-operator-config
+data:
+  APPLICATION: operator
+  RABBIT_USER: sauron-operator
+  RABBIT_PASSWORD: "MYPGOsZp1tyEHZXr"
+  OPERATOR_CONSUMERS: "50"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-api-config
+data:
+  APPLICATION: api
+  WEB_DOCUMENT_ROOT: "/app/api/web"
+  RABBIT_USER: sauron-api
+  RABBIT_PASSWORD: "QxDCsx4M6mePgVM9"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-backend-config
+data:
+  APPLICATION: backend
+  WEB_DOCUMENT_ROOT: "/app/backend/web"
+

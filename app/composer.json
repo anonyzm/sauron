@@ -1,0 +1,88 @@
+{
+    "name": "ladno/sauron",
+    "description": "Sauron",
+    "type": "project",
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        {
+            "type":"git",
+            "url": "https://gitlab.kuznitsa.pro/dev/library/yii2-toolkit.git"
+        },
+        {
+            "type":"git",
+            "url": "https://gitlab.kuznitsa.pro/dev/library/woody"
+        },
+        {
+            "type": "git",
+            "url": "https://gitlab.kuznitsa.pro/dev/library/yii2-settings.git"
+        },
+        {
+            "type":"git",
+            "url": "https://gitlab.kuznitsa.pro/dev/library/instaparser"
+        },
+        {
+            "type":"git",
+            "url": "https://gitlab.kuznitsa.pro/dev/library/proxyconveyor"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "yiisoft/yii2": "~2.0.14",
+        "yiisoft/yii2-mongodb": "^2.1",
+        "yiisoft/yii2-redis": "^2.0",
+        "yiisoft/yii2-shell": "*",
+        "vlucas/phpdotenv": "^2.4",
+        "symfony/process": "^4.4",
+        "ladno/woody": "^1.1.3",
+        "ladno/instaparserlib": "^2.2.0",
+        "ladno/proxyconveyor": "^1.0.0",
+        "ladno/yii2-toolkit": "^2.1.3",
+        "guzzlehttp/guzzle": "~6.3.0",
+        "ramsey/uuid": "^3.5",
+        "notamedia/yii2-sentry": "^1.3",
+        "ladno/yii2-settings": "^1.0",
+        "yiisoft/yii2-httpclient": "~2.0.0",
+        "understeam/yii2-slack": "~0.3.0",
+        "google/apiclient": "^2.0",
+
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.1.0",
+        "yiisoft/yii2-faker": "~2.0.0",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+
+        "paquettg/php-html-parser": "^2.0.2",
+        "ext-json": "*"
+    },
+    "require-dev": {
+
+        "codeception/base": "~2.3.0",
+        "codeception/verify": "~0.4.0",
+        "codeception/specify": "~0.4.6",
+        "symfony/browser-kit": ">=2.7 <=4.2.4"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "fxp-asset" : {
+            "installer-paths": {
+                "npm-asset-library": "vendor/npm",
+                "bower-asset-library": "vendor/bower"
+            }
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@asset-fix"
+        ],
+        "post-update-cmd": [
+            "@asset-fix"
+        ],
+        "asset-fix": [
+            "[ ! -L /app/vendor/bower ] && ln -s /app/vendor/bower-asset /app/vendor/bower || true",
+            "[ ! -L /app/vendor/npm ] && ln -s /app/vendor/npm-asset /app/vendor/npm || true"
+        ]
+    }
+}

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-operator
+  labels:
+    app: {{env "CI_PROJECT_NAME"}}-operator
+spec:
+  revisionHistoryLimit: 3
+  replicas: {{env "OPERATOR_REPLICAS_COUNT" | default 1}}
+  selector:
+    matchLabels:
+      app: {{env "CI_PROJECT_NAME"}}-operator
+  template:
+    metadata:
+      labels:
+        app: {{env "CI_PROJECT_NAME"}}-operator
+    spec:
+      containers:
+      - name: app
+        image: {{env "CI_REGISTRY_IMAGE"}}:{{env "CI_REGISTRY_IMAGE_TAG"}}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-config
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-operator-config            
+      - name: redis
+        image: redis

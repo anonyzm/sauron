@@ -1,0 +1,98 @@
+version: '3.3'
+networks:
+  default:
+  aura:
+    external:
+      name: aura
+
+services:
+  api:
+    image: registry.kuznitsa.pro/docker/php-nginx
+    volumes:
+    - ./app:/app
+    environment:
+    - APPLICATION=api
+    - WEB_DOCUMENT_ROOT=/app/api/web
+    - SENTRY_ENABLED=false
+    ports:
+    - "84:80"
+    - "444:443"
+    depends_on:
+    - rabbitmq
+    - mongodb
+    - redis
+    networks:
+      default:
+      aura:
+        aliases:
+        - api.sauron
+
+  operator:
+    image: registry.kuznitsa.pro/docker/php
+    volumes:
+    - ./app:/app
+    environment:
+    - APPLICATION=operator
+    - SENTRY_ENABLED=false
+    - SUPERVISOR_ENABLED=true
+    - SUPERVISOR_SOURCE_FILE=/home/application/supervisor.conf
+    depends_on:
+    - rabbitmq
+    - mongodb
+    - redis
+
+  persister:
+    image: registry.kuznitsa.pro/docker/php
+    volumes:
+    - ./app:/app
+    environment:
+    - APPLICATION=persister
+    - SENTRY_ENABLED=false
+    - SUPERVISOR_ENABLED=true
+    - SUPERVISOR_SOURCE_FILE=/home/application/supervisor.conf
+    depends_on:
+    - rabbitmq
+    - mongodb
+    - redis
+
+  scheduler:
+    image: registry.kuznitsa.pro/docker/php
+    volumes:
+    - ./app:/app
+    environment:
+    - APPLICATION=scheduler
+    - CRONTAB_SOURCE_FILE=/home/application/crontab
+    - SENTRY_ENABLED=false
+    depends_on:
+    - rabbitmq
+    - mongodb
+    - redis
+
+  rabbitmq:
+    hostname: dev
+    image: rabbitmq:management
+    volumes:
+    - ./services/rabbit/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+    - ./services/rabbit/definitions.json:/etc/rabbitmq/definitions.json:ro
+    networks:
+      default:
+        aliases:
+        - rabbitmq.sauron
+
+  mongodb:
+    image: mongo
+    volumes:
+    - mongodb:/data/db
+
+  redis:
+    image: redis
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    environment:
+    - URL=http://localhost:84/swagger
+    ports:
+    - "8484:8080"
+
+volumes:
+  mongodb:

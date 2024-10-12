@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-scheduler
+  labels:
+    app: {{env "CI_PROJECT_NAME"}}-scheduler
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{env "CI_PROJECT_NAME"}}-scheduler
+  template:
+    metadata:
+      labels:
+        app: {{env "CI_PROJECT_NAME"}}-scheduler
+    spec:
+      containers:
+      - name: app
+        image: {{env "CI_REGISTRY_IMAGE"}}:{{env "CI_REGISTRY_IMAGE_TAG"}}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-config
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-scheduler-config 
+      - name: redis
+        image: redis

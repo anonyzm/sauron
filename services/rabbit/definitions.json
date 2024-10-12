@@ -1,0 +1,140 @@
+{
+  "rabbit_version": "3.7.12",
+  "users": [
+    {
+      "name":"sauron",
+      "password_hash":"Umk+4uI52lzIs8gmbCJxS8KwWqzboUPA/aMwn6I1ROeSakbh",
+      "hashing_algorithm":"rabbit_password_hashing_sha256",
+      "tags":""
+    },
+    {
+      "name":"admin",
+      "password_hash":"25nwTiYRu8j4wysdQgjvxgUF+ZHUHKCwKodnQ957nvYWmhoe",
+      "hashing_algorithm":"rabbit_password_hashing_sha256",
+      "tags":"administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "sauron"
+    }
+  ],
+  "permissions": [
+    {
+      "user":"admin",
+      "vhost":"/",
+      "configure":".*",
+      "write":".*",
+      "read":".*"
+    },
+    {
+      "user":"sauron",
+      "vhost":"sauron",
+      "configure":".*",
+      "write":".*",
+      "read":".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "rabbit@dev"
+    }
+  ],
+  "policies": [],
+  "queues": [
+    {
+      "name": "persister-exchange.queue",
+      "vhost": "sauron",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-max-priority": 10
+      }
+    },
+    {
+      "name":"presentation-exchange.queue",
+      "vhost":"sauron",
+      "durable":true,
+      "auto_delete":false,
+      "arguments":{
+        "x-max-priority":10
+      }
+    },
+    {
+      "name":"operator-exchange.queue",
+      "vhost":"sauron",
+      "durable":true,
+      "auto_delete":false,
+      "arguments":{
+        "x-max-priority":10
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "name":"operator-exchange",
+      "vhost":"sauron",
+      "type":"direct",
+      "durable":true,
+      "auto_delete":false,
+      "internal":false,
+      "arguments":{
+      }
+    },
+    {
+      "name":"presentation-exchange",
+      "vhost":"sauron",
+      "type":"direct",
+      "durable":true,
+      "auto_delete":false,
+      "internal":false,
+      "arguments":{
+      }
+    },
+    {
+      "name":"persister-exchange",
+      "vhost":"sauron",
+      "type":"direct",
+      "durable":true,
+      "auto_delete":false,
+      "internal":false,
+      "arguments":{
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "source":"operator-exchange",
+      "vhost":"sauron",
+      "destination":"operator-exchange.queue",
+      "destination_type":"queue",
+      "routing_key":"",
+      "arguments":{
+      }
+    },
+    {
+      "source":"persister-exchange",
+      "vhost":"sauron",
+      "destination":"persister-exchange.queue",
+      "destination_type":"queue",
+      "routing_key":"",
+      "arguments":{
+      }
+    },
+    {
+      "source":"presentation-exchange",
+      "vhost":"sauron",
+      "destination":"presentation-exchange.queue",
+      "destination_type":"queue",
+      "routing_key":"",
+      "arguments":{
+      }
+    }
+  ]
+}

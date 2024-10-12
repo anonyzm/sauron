@@ -1,0 +1,493 @@
+openapi: 3.0.1
+info:
+  title: Sauron API
+  description: 'Monitoring API documentation'
+  version: 1.0.0
+  contact:
+    name: API Support,
+    url: https://onlypult.com/faq,
+    email: support@onlypult.com
+
+servers:
+  - url: http://localhost:84/api/v1
+tags:
+  - name: account
+    description: Monitoring account
+  - name: theme
+    description: Monitoring themes
+  - name: mentions
+    description: Collected mentions
+paths:
+  /accounts:
+    get:
+      tags:
+        - account
+      summary: Get account list
+      description: Optionally filtered accounts list
+      operationId: getAccounts
+      parameters:
+        - name: external_id
+          in: query
+          description: 'ID в терминах фронтенда'
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        401:
+          description: Unauthorized
+          content: {}
+    post:
+      tags:
+        - account
+      summary: Create new account
+      description: Create new monitoring account
+      operationId: createAccount
+      requestBody:
+        description: Account to be added
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Account'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        401:
+          description: Unauthorized
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+        422:
+          description: Validation error
+          content: {}
+  /accounts/{id}:
+    get:
+      tags:
+        - account
+      summary: Get account by ID
+      description: Get one account by ID
+      operationId: getAccount
+      parameters:
+        - name: id
+          in: path
+          description: 'ID'
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        401:
+          description: Unauthorized
+          content: {}
+        404:
+          description: Account not found
+          content: {}
+    put:
+      tags:
+        - account
+      summary: Update account
+      description: Update account
+      operationId: updateAccount
+      parameters:
+        - name: id
+          in: path
+          description: 'ID'
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Account to update
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Account'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        401:
+          description: Unauthorized
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+        422:
+          description: Validation error
+          content: {}
+  /themes:
+    get:
+      tags:
+        - theme
+      summary: Get themes list
+      description: Optionally filtered themes list
+      operationId: getThemes
+      parameters:
+        - name: account_id
+          in: query
+          description: 'ID аккаунта'
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Themes'
+        401:
+          description: Unauthorized
+          content: {}
+    post:
+      tags:
+        - theme
+      summary: Create new theme
+      description: Create new theme
+      operationId: createTheme
+      requestBody:
+        description: Theme to be added
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Theme'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        401:
+          description: Unauthorized
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+        422:
+          description: Validation error
+          content: {}
+  /themes/{id}:
+    get:
+      tags:
+        - theme
+      summary: Get theme by ID
+      description: Get one theme by ID
+      operationId: getTheme
+      parameters:
+        - name: id
+          in: path
+          description: 'ID'
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        401:
+          description: Unauthorized
+          content: {}
+        404:
+          description: Accoutn not found
+          content: {}
+    put:
+      tags:
+        - theme
+      summary: Update theme
+      description: Update theme
+      operationId: updateTheme
+      parameters:
+        - name: id
+          in: path
+          description: 'ID'
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Theme to update
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Theme'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        401:
+          description: Unauthorized
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+        422:
+          description: Validation error
+          content: {}
+
+  /mentions:
+    get:
+      tags:
+        - mention
+      summary: Get mentions list
+      description: Get mentions list
+      operationId: getMentions
+      parameters:
+        - name: theme_id
+          in: query
+          description: 'ID темы'
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: integer
+        - name: to
+          in: query
+          schema:
+            type: integer
+        - name: sources
+          in: query
+          description: 'Список источников через запятую'
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mentions'
+        401:
+          description: Unauthorized
+          content: {}
+
+  /mentions-days:
+    get:
+      tags:
+        - mention
+      summary: Get mentions per day list
+      description: Get mentions count grouped by day
+      operationId: getMentionsDay
+      parameters:
+        - name: theme_id
+          in: query
+          description: 'ID темы'
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: integer
+        - name: to
+          in: query
+          schema:
+            type: integer
+        - name: sources
+          in: query
+          description: 'Список источников через запятую'
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MentionsPeriod'
+        401:
+          description: Unauthorized
+          content: {}
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        service_id:
+          type: string
+        external_id:
+          type: string
+        alias:
+          type: string
+        timezone:
+          type: string
+        limit:
+          type: integer
+        limitAvailable:
+          type: integer
+        created:
+          type: integer
+        updated:
+          type: integer
+      required:
+        - alias
+        - service_id
+        - external_id
+        - timezone
+
+    Theme:
+      type: object
+      properties:
+        id:
+          type: string
+        account_id:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - idle
+            - deleted
+        name:
+          type: string
+        words:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+        minusWords:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        limit:
+          type: integer
+        maxLimit:
+          type: integer
+        sources:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+        created:
+          type: integer
+        updated:
+          type: integer
+        scanned:
+          type: integer
+      required:
+        - name
+        - words
+        - account_id
+        - sources
+
+    Mention:
+      type: object
+      properties:
+        id:
+          type: string
+        theme_id:
+          type: string
+        external_id:
+          oneOf:
+            - type: string
+            - type: integer
+        link:
+          type: string
+        user_id:
+          oneOf:
+            - type: string
+            - type: integer
+        username:
+          type: string
+        userpic:
+          type: string
+        text:
+          type: string
+        source:
+          type: string
+        meta:
+          oneOf:
+            - type: array
+            - type: object
+        created:
+          type: integer
+        persisted:
+          type: integer
+      required:
+        - theme_id
+        - external_id
+        - text
+        - created
+
+    MentionPeriod:
+      type: object
+      properties:
+        id:
+          type: string
+        theme_id:
+          type: string
+        day_timestamp:
+          type: integer
+        count:
+          type: integer
+        source:
+          type: string
+        created_at:
+          type: integer
+        updated_at:
+          type: integer
+      required:
+        - theme_id
+        - day_timestamp
+        - count
+        - source
+
+    Accounts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Account'
+
+    Themes:
+      type: array
+      items:
+        $ref: '#/components/schemas/Theme'
+
+    Mentions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Mention'
+
+    MentionsPeriod:
+      type: array
+      items:
+        $ref: '#/components/schemas/MentionPeriod'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [] 

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-backend
+  labels:
+    app: {{env "CI_PROJECT_NAME"}}-backend
+spec:
+  revisionHistoryLimit: 3
+  replicas: {{env "backend_REPLICAS_COUNT" | default 1}}
+  selector:
+    matchLabels:
+      app: {{env "CI_PROJECT_NAME"}}-backend
+  template:
+    metadata:
+      labels:
+        app: {{env "CI_PROJECT_NAME"}}-backend
+    spec:
+      containers:
+      - name: app
+        image: {{env "CI_REGISTRY_IMAGE"}}/web:{{env "CI_REGISTRY_IMAGE_TAG"}}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-config
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-backend-config
+      - name: redis
+        image: redis
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-backend-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: {{env "CI_PROJECT_NAME"}}-backend
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-backend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+  - hosts:
+    - {{env "HOSTNAME_PREFIX"}}{{env "CI_PROJECT_NAME"}}-backend.ttt1.pro
+  rules:
+  - host: {{env "HOSTNAME_PREFIX"}}{{env "CI_PROJECT_NAME"}}-backend.ttt1.pro
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{env "CI_PROJECT_NAME"}}-backend-svc
+          servicePort: 80
+  

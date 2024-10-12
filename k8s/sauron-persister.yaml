@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{env "CI_PROJECT_NAME"}}-persister
+  labels:
+    app: {{env "CI_PROJECT_NAME"}}-persister
+spec:
+  revisionHistoryLimit: 3
+  replicas: {{env "PERSISTER_REPLICAS_COUNT" | default 1}}
+  selector:
+    matchLabels:
+      app: {{env "CI_PROJECT_NAME"}}-persister
+  template:
+    metadata:
+      labels:
+        app: {{env "CI_PROJECT_NAME"}}-persister
+    spec:
+      containers:
+      - name: app
+        image: {{env "CI_REGISTRY_IMAGE"}}:{{env "CI_REGISTRY_IMAGE_TAG"}}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-config
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-persister-config
+
+      - name: redis
+        image: redis
+      initContainers:
+      - name: app-init
+        image: {{env "CI_REGISTRY_IMAGE"}}:{{env "CI_REGISTRY_IMAGE_TAG"}}
+        command: ["/bin/sh"]
+        args: ["-c", "/app/yii app/init --interactive 0"]
+        envFrom:
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-config
+        - configMapRef:
+            name: {{env "CI_PROJECT_NAME"}}-persister-config     
